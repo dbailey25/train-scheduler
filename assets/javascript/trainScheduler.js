@@ -73,28 +73,49 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var destination = childSnapshot.val().destination;
   var start = childSnapshot.val().start;
   var freqMinutes = childSnapshot.val().frequency;
+// };
 
-  // Employee Info
-  // console.log(empName);
-  // console.log(empRole);
-  // console.log(empStart);
-  // console.log(empRate);
+  // Assumptions
+      // var tFrequency = 3;
 
-  // Prettify the employee start
-  // var empStartPretty = moment.unix(empStart).format("MM/DD/YY");
-  //
-  // // Calculate the months worked using hardcore math
-  // // To calculate the months worked
-  // var empMonths = moment().diff(moment.unix(empStart, "X"), "months");
-  // console.log(empMonths);
-  //
-  // // Calculate the total billed rate
-  // var empBilled = empMonths * empRate;
-  // console.log(empBilled);
+      // Time is 3:30 AM
+      // var firstTime = "03:30";
+
+      // First Time (pushed back 1 year to make sure it comes before current time)
+      var firstTimeConverted = moment(start, "hh:mm").subtract(1, "years");
+      console.log(firstTimeConverted);
+
+      // Current Time
+      var currentTime = moment();
+      console.log("CURRENT TIME: " + moment(currentTime).format("HH:mm"));
+
+      // Difference between the times
+      var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+      console.log("DIFFERENCE IN TIME: " + diffTime);
+
+      // Time apart (remainder)
+      var tRemainder = diffTime % freqMinutes;
+      console.log(tRemainder);
+
+      // Minute Until Train
+      var tMinutesTillTrain = freqMinutes - tRemainder;
+      console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+      // Next Train
+      var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+      console.log("ARRIVAL TIME: " + moment(nextTrain).format("HH:mm"));
+
+
+
+  // for (var i = 1; i < 5; i++) {
+  //   var nextDeparture = freqMinutes * i;
+  //   var departureTime = moment().add(nextDeparture, 'minutes').format("HH:mm");
+  //   console.log(departureTime);
+
 
   // Add each train's data into the table
   $("#schedule-table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  start + "</td><td>" + freqMinutes + "</td></tr>");
+  freqMinutes + "</td><td>" + moment(nextTrain).format("HH:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
   // $("#schedule-table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
   // start + "</td><td>" + freqMinutes + "</td><td>" + nextDepart + "</td></tr>");
 });
